@@ -4218,24 +4218,36 @@ ReactDOM.createRoot(document.getElementById("tweaks-root")).render(/*#__PURE__*/
       </div>
     </div>
 
-    <div class="contact-form reveal reveal-delay-1 visible">
+    <form
+      class="contact-form reveal reveal-delay-1 visible"
+      name="inquiry"
+      method="POST"
+      data-netlify="true"
+      netlify-honeypot="bot-field"
+      onsubmit="handleSubmit(event)"
+    >
+      <input type="hidden" name="form-name" value="inquiry">
+      <p hidden>
+        <label>Don't fill this out if you're human: <input name="bot-field"></label>
+      </p>
+
       <div class="form-row">
         <div class="form-group">
-          <label>Full Name</label>
-          <input type="text" placeholder="Col. A. Sharma">
+          <label for="f-name">Full Name</label>
+          <input id="f-name" type="text" name="name" placeholder="Col. A. Sharma" required>
         </div>
         <div class="form-group">
-          <label>Organisation</label>
-          <input type="text" placeholder="CISF / MHA / State Police">
+          <label for="f-org">Organisation</label>
+          <input id="f-org" type="text" name="organisation" placeholder="CISF / MHA / State Police" required>
         </div>
       </div>
       <div class="form-group">
-        <label>Official Email</label>
-        <input type="email" placeholder="name@organisation.gov.in">
+        <label for="f-email">Official Email</label>
+        <input id="f-email" type="email" name="email" placeholder="name@organisation.gov.in" required>
       </div>
       <div class="form-group">
-        <label>Requirement Type</label>
-        <select>
+        <label for="f-type">Requirement Type</label>
+        <select id="f-type" name="requirement-type" required>
           <option value="">— Select product category —</option>
           <option>Personal Protection (Vests / Helmets)</option>
           <option>Barricade Systems</option>
@@ -4245,12 +4257,12 @@ ReactDOM.createRoot(document.getElementById("tweaks-root")).render(/*#__PURE__*/
         </select>
       </div>
       <div class="form-group">
-        <label>Operational Context</label>
-        <textarea placeholder="Brief description of the deployment environment, approximate quantities, and any relevant specifications or standards required..."></textarea>
+        <label for="f-context">Operational Context</label>
+        <textarea id="f-context" name="operational-context" placeholder="Brief description of the deployment environment, approximate quantities, and any relevant specifications or standards required..."></textarea>
       </div>
-      <button class="btn-primary" style="width:100%; padding:14px; font-size:12px;" onclick="handleSubmit(event)">Submit Inquiry →</button>
+      <button type="submit" class="btn-primary" style="width:100%; padding:14px; font-size:12px;">Submit Inquiry →</button>
       <p style="font-size:11px; color:var(--text-faint); line-height:1.5;">All submissions are treated with strict confidentiality. We do not share inquiry details with third parties.</p>
-    </div>
+    </form>
   </div>
 </section>
 
@@ -4273,12 +4285,353 @@ ReactDOM.createRoot(document.getElementById("tweaks-root")).render(/*#__PURE__*/
   white-space:nowrap;
 ">Inquiry submitted. We'll respond within 48 hours.</div>
 
+<!-- ─── RESPONSIVE / MOBILE ─── -->
+<style>
+  /* Hamburger toggle (hidden on desktop) */
+  .nav-toggle {
+    display: none;
+    background: transparent;
+    border: 1px solid var(--line-strong);
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    padding: 0;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 4px;
+    transition: border-color 0.2s;
+  }
+  .nav-toggle:hover { border-color: var(--text-muted); }
+  .nav-toggle span {
+    display: block;
+    width: 18px;
+    height: 1.5px;
+    background: var(--text);
+    transition: transform 0.3s, opacity 0.2s;
+  }
+  nav.open .nav-toggle span:nth-child(1) { transform: translateY(5.5px) rotate(45deg); }
+  nav.open .nav-toggle span:nth-child(2) { opacity: 0; }
+  nav.open .nav-toggle span:nth-child(3) { transform: translateY(-5.5px) rotate(-45deg); }
+
+  /* ─── Tablet ≤1024px ─── */
+  @media (max-width: 1024px) {
+    nav { padding: 0 32px; }
+    .nav-links { gap: 24px; }
+    .hero-left { padding: 130px 40px 64px 40px; }
+    .section-inner { padding: 0 40px; }
+    .pcard-hero,
+    .pcard-row,
+    .pcoming-strip { margin-left: 40px; margin-right: 40px; }
+    .pcoming-inner { grid-template-columns: 220px 1fr; }
+    .pcoming-items { grid-template-columns: repeat(2, 1fr); }
+    .legacy-grid { gap: 56px; }
+    .why-instrument { padding: 0 40px 80px !important; }
+    .why-section > div:first-child { padding: 0 40px !important; }
+    .mfg-pipeline-wrap { padding: 0 40px 80px; }
+    .mfg-panel { grid-template-columns: 1fr 320px; }
+    .contact-inner { padding: 80px 40px; gap: 56px; }
+    footer { padding: 28px 40px; }
+  }
+
+  /* ─── Hamburger nav ≤900px ─── */
+  @media (max-width: 900px) {
+    .nav-toggle { display: flex; }
+    .nav-cta { display: none; }
+    .nav-links {
+      position: fixed;
+      top: 72px;
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      background: rgba(5,8,11,0.97);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      padding: 8px 24px 24px;
+      transform: translateY(-120%);
+      transition: transform 0.35s cubic-bezier(0.22,1,0.36,1);
+      pointer-events: none;
+      max-height: calc(100vh - 64px);
+      overflow-y: auto;
+    }
+    nav.open .nav-links {
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    .nav-links li {
+      padding: 16px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .nav-links li:last-child { border-bottom: none; }
+    .nav-links a {
+      font-size: 13px;
+      display: block;
+    }
+  }
+
+  /* ─── Mobile ≤768px ─── */
+  @media (max-width: 768px) {
+    nav { padding: 0 20px; height: 64px; }
+    .nav-links { top: 64px; max-height: calc(100vh - 64px); }
+    .nav-wordmark .brand { font-size: 15px; }
+    .nav-wordmark .sub { font-size: 7.5px; letter-spacing: 0.16em; }
+
+    /* Hero: stack image above text */
+    .hero {
+      grid-template-columns: 1fr;
+      min-height: auto;
+    }
+    .hero-right {
+      order: 1;
+      min-height: 360px;
+      border-left: none;
+      border-bottom: 1px solid var(--line);
+    }
+    .hero-left {
+      order: 2;
+      padding: 56px 24px 64px;
+    }
+    .hero-headline {
+      font-size: clamp(32px, 8.5vw, 44px) !important;
+      max-width: 100%;
+    }
+    .hero-sub {
+      font-size: 15px;
+      max-width: 100%;
+      margin-bottom: 32px;
+    }
+    .hero-actions { gap: 12px; }
+    .hero-actions .btn-primary,
+    .hero-actions .btn-secondary {
+      flex: 1 1 auto;
+      text-align: center;
+      padding: 12px 18px;
+    }
+    .reticle-bg svg { width: 100%; max-width: 380px; height: auto; }
+    .hero-product-label { bottom: 20px; left: 20px; font-size: 9px; }
+    .coord-tl { top: 16px; left: 20px; font-size: 8px; }
+    .coord-tr { top: 16px; right: 20px; font-size: 8px; }
+    .coord-br { bottom: 20px; right: 20px; font-size: 8px; }
+    #videoMuteBtn { top: 14px !important; right: 14px !important; width: 32px !important; height: 32px !important; }
+
+    /* Capability strip → single column */
+    .capability-strip { grid-template-columns: 1fr; }
+    .cap-item {
+      border-right: none;
+      border-bottom: 1px solid var(--line);
+      padding: 28px 24px;
+    }
+    .cap-item:last-child { border-bottom: none; }
+    .cap-number { font-size: 30px; }
+
+    /* Section headers */
+    .section-inner { padding: 0 24px; }
+    .section-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 18px;
+      padding-top: 64px !important;
+      padding-bottom: 32px;
+      margin-bottom: 32px;
+    }
+    .section-desc { text-align: left; max-width: 100%; }
+    .section-title { max-width: 100%; }
+
+    /* Products */
+    .pcard-hero,
+    .pcard-row,
+    .pcoming-strip {
+      margin-left: 24px !important;
+      margin-right: 24px !important;
+    }
+    .pcard-hero {
+      grid-template-columns: 1fr;
+      min-height: auto;
+    }
+    .pcard-hero .pcard-img-wrap { min-height: 320px; }
+    .pcard-row {
+      grid-template-columns: 1fr;
+      margin-bottom: 64px !important;
+    }
+    .pcard-half { min-height: auto; }
+    .pcard-half .pcard-img-wrap { min-height: 240px; }
+    .pcard-info {
+      padding: 32px 28px;
+      border-left: none;
+      border-top: 1px solid var(--line);
+    }
+    .pcard-half .pcard-info { padding: 28px 24px 32px; }
+    .pcard-name { font-size: clamp(26px, 7vw, 34px) !important; }
+    .pcard-spec { max-width: 100%; }
+
+    /* Coming-soon strip */
+    .pcoming-inner { grid-template-columns: 1fr; }
+    .pcoming-left {
+      padding: 32px 24px;
+      border-right: none;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+    }
+    .pcoming-heading { font-size: 22px; }
+    .pcoming-items { grid-template-columns: 1fr 1fr; }
+    .pcoming-item { padding: 24px 18px; }
+    .pcoming-item-name { font-size: 13px; }
+
+    /* Legacy */
+    .legacy-grid {
+      grid-template-columns: 1fr;
+      gap: 48px;
+      padding-bottom: 64px;
+    }
+    .legacy-stat-row {
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-top: 32px;
+      padding-top: 32px;
+    }
+    .legacy-stat { min-width: 120px; }
+    .legacy-stat-num { font-size: 26px; }
+
+    /* Why */
+    .why-section > div:first-child { padding: 0 24px !important; }
+    .why-section > div:first-child > div {
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      gap: 16px !important;
+      padding-top: 64px !important;
+      padding-bottom: 28px !important;
+    }
+    .why-section > div:first-child > div p { text-align: left !important; }
+    .why-instrument { padding: 0 24px 64px !important; }
+
+    /* Manufacturing */
+    .mfg-pipeline-wrap { padding: 0 24px 64px; }
+    .mfg-tabs {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .mfg-tabs::-webkit-scrollbar { display: none; }
+    .mfg-tab {
+      padding: 14px 16px;
+      font-size: 11px;
+      flex-shrink: 0;
+    }
+    .mfg-tab-arrow { display: none; }
+    .mfg-panel { grid-template-columns: 1fr; }
+    .mfg-panel.active { display: block; }
+    .mfg-panel-visual { padding: 16px; min-height: 220px; }
+    .mfg-panel-info {
+      border-left: none;
+      border-top: 1px solid var(--line);
+      padding: 32px 24px;
+    }
+    .mfg-spec-grid { grid-template-columns: 1fr; }
+    .mfg-spec-cell {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* Contact */
+    .contact-inner {
+      grid-template-columns: 1fr;
+      gap: 48px;
+      padding: 64px 24px;
+    }
+    .form-row { grid-template-columns: 1fr; }
+    .contact-headline { font-size: clamp(26px, 7vw, 34px) !important; }
+    .contact-sub { max-width: 100%; }
+
+    /* Footer */
+    footer {
+      flex-direction: column;
+      gap: 16px;
+      padding: 24px;
+      text-align: center;
+    }
+    .footer-links { gap: 20px; flex-wrap: wrap; justify-content: center; }
+
+    /* Toast: keep centered transform, just shrink */
+    #toast {
+      max-width: calc(100vw - 32px);
+      white-space: normal !important;
+      text-align: center;
+      font-size: 12px;
+      padding: 12px 20px !important;
+    }
+  }
+
+  /* ─── Small phones ≤480px ─── */
+  @media (max-width: 480px) {
+    .nav-wordmark .sub { display: none; }
+    nav { padding: 0 16px; }
+    .nav-logo svg { width: 38px; height: 38px; }
+
+    .hero-left { padding: 48px 20px 56px; }
+    .hero-actions { flex-direction: column; align-items: stretch; }
+    .hero-actions .btn-primary,
+    .hero-actions .btn-secondary { width: 100%; }
+
+    .section-inner { padding: 0 20px; }
+    .pcard-hero,
+    .pcard-row,
+    .pcoming-strip {
+      margin-left: 16px !important;
+      margin-right: 16px !important;
+    }
+    .pcard-info { padding: 28px 22px; }
+    .pcard-half .pcard-info { padding: 24px 20px 28px; }
+
+    .pcoming-items { grid-template-columns: 1fr; }
+    .legacy-stat-row { flex-direction: column; gap: 20px; }
+    .why-instrument { padding: 0 20px 56px !important; }
+    .mfg-pipeline-wrap { padding: 0 20px 56px; }
+    .contact-inner { padding: 56px 20px; }
+    footer { padding: 20px; }
+    .footer-copy { font-size: 11px; }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .nav-links { transition: none; }
+  }
+</style>
+
 <script>
   // Nav scroll behavior
   const nav = document.getElementById('nav');
   window.addEventListener('scroll', () => {
     nav.classList.toggle('scrolled', window.scrollY > 40);
   });
+
+  // Mobile nav toggle
+  const navToggleBtn = document.getElementById('navToggle');
+  if (navToggleBtn) {
+    navToggleBtn.addEventListener('click', () => {
+      const isOpen = nav.classList.toggle('open');
+      navToggleBtn.setAttribute('aria-expanded', String(isOpen));
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+    });
+    document.querySelectorAll('.nav-links a').forEach(a => {
+      a.addEventListener('click', () => {
+        nav.classList.remove('open');
+        navToggleBtn.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+      });
+    });
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 900 && nav.classList.contains('open')) {
+        nav.classList.remove('open');
+        navToggleBtn.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+      }
+    });
+  }
 
   // Reveal on scroll
   const reveals = document.querySelectorAll('.reveal');
@@ -4294,14 +4647,46 @@ ReactDOM.createRoot(document.getElementById("tweaks-root")).render(/*#__PURE__*/
     setTimeout(() => el.classList.add('visible'), 100 + i * 100);
   });
 
-  // Form submit
+  // Form submit — posts to Netlify Forms via AJAX, no page reload
   function handleSubmit(e) {
     e.preventDefault();
+    const form = e.target;
     const toast = document.getElementById('toast');
-    toast.style.transform = 'translateX(-50%) translateY(0)';
-    setTimeout(() => {
-      toast.style.transform = 'translateX(-50%) translateY(80px)';
-    }, 3500);
+    const button = form.querySelector('button[type="submit"]');
+    const originalLabel = button.textContent;
+    const defaultMsg = "Inquiry submitted. We'll respond within 48 hours.";
+
+    button.disabled = true;
+    button.textContent = 'Submitting…';
+
+    const body = new URLSearchParams(new FormData(form)).toString();
+
+    fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: body,
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error('Network error');
+        toast.textContent = defaultMsg;
+        toast.style.transform = 'translateX(-50%) translateY(0)';
+        form.reset();
+        setTimeout(() => {
+          toast.style.transform = 'translateX(-50%) translateY(80px)';
+        }, 3500);
+      })
+      .catch(() => {
+        toast.textContent = 'Submission failed. Please email info@ballistiqdefense.com';
+        toast.style.transform = 'translateX(-50%) translateY(0)';
+        setTimeout(() => {
+          toast.style.transform = 'translateX(-50%) translateY(80px)';
+          setTimeout(() => { toast.textContent = defaultMsg; }, 500);
+        }, 4000);
+      })
+      .finally(() => {
+        button.disabled = false;
+        button.textContent = originalLabel;
+      });
   }
 
   // Animated number counters
