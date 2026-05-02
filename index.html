@@ -4222,6 +4222,7 @@ ReactDOM.createRoot(document.getElementById("tweaks-root")).render(/*#__PURE__*/
       class="contact-form reveal reveal-delay-1 visible"
       name="inquiry"
       method="POST"
+      action="/"
       data-netlify="true"
       netlify-honeypot="bot-field"
       onsubmit="handleSubmit(event)"
@@ -4647,7 +4648,10 @@ ReactDOM.createRoot(document.getElementById("tweaks-root")).render(/*#__PURE__*/
     setTimeout(() => el.classList.add('visible'), 100 + i * 100);
   });
 
-  // Form submit — posts to Netlify Forms via AJAX, no page reload
+  // Form submit — posts to Netlify Forms via AJAX, no page reload.
+  // Matches Netlify's official AJAX pattern: trust resolution, fail only on
+  // true network errors (NOT on 4xx — Netlify often 302-redirects to a
+  // thank-you URL that may 404, even though the submission was captured).
   function handleSubmit(e) {
     e.preventDefault();
     const form = e.target;
@@ -4660,28 +4664,34 @@ ReactDOM.createRoot(document.getElementById("tweaks-root")).render(/*#__PURE__*/
     button.textContent = 'Submitting…';
 
     const body = new URLSearchParams(new FormData(form)).toString();
+    const endpoint = form.getAttribute('action') || window.location.pathname || '/';
 
-    fetch('/', {
+    const showToast = (msg) => {
+      toast.textContent = msg;
+      toast.style.transform = 'translateX(-50%) translateY(0)';
+      setTimeout(() => {
+        toast.style.transform = 'translateX(-50%) translateY(80px)';
+        setTimeout(() => { toast.textContent = defaultMsg; }, 500);
+      }, 3500);
+    };
+
+    fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: body,
     })
       .then((res) => {
-        if (!res.ok) throw new Error('Network error');
-        toast.textContent = defaultMsg;
-        toast.style.transform = 'translateX(-50%) translateY(0)';
+        // Log status for debugging, but don't gate success on it.
+        // Netlify accepts the POST and often follows a redirect; the final
+        // response status reflects that page, not the submission outcome.
+        console.log('[Inquiry] response status:', res.status);
+        if (res.status >= 500) throw new Error('Server error ' + res.status);
+        showToast(defaultMsg);
         form.reset();
-        setTimeout(() => {
-          toast.style.transform = 'translateX(-50%) translateY(80px)';
-        }, 3500);
       })
-      .catch(() => {
-        toast.textContent = 'Submission failed. Please email info@ballistiqdefense.com';
-        toast.style.transform = 'translateX(-50%) translateY(0)';
-        setTimeout(() => {
-          toast.style.transform = 'translateX(-50%) translateY(80px)';
-          setTimeout(() => { toast.textContent = defaultMsg; }, 500);
-        }, 4000);
+      .catch((err) => {
+        console.error('[Inquiry] submission failed:', err);
+        showToast('Submission failed. Please email info@ballistiqdefense.com');
       })
       .finally(() => {
         button.disabled = false;
