@@ -4229,8 +4229,8 @@ ReactDOM.createRoot(document.getElementById("tweaks-root")).render(/*#__PURE__*/
       onsubmit="handleSubmit(event)"
     >
       <input type="hidden" name="form-name" value="inquiry">
-      <p hidden>
-        <label>Don't fill this out if you're human: <input name="bot-field"></label>
+      <p style="position:absolute; left:-9999px; opacity:0; pointer-events:none; height:0; overflow:hidden;" aria-hidden="true">
+        <label>Don't fill this out if you're human: <input name="bot-field" tabindex="-1" autocomplete="off"></label>
       </p>
 
       <div class="form-row">
